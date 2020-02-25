@@ -1,0 +1,32 @@
+{
+  "name": "Borgbackup for homeassistant",
+  "version": "0.2",
+  "slug": "borg-backup",
+  "description": "Borgbackup!",
+  "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
+  "startup": "before",
+  "boot": "manual",
+  "hassio_role": "backup",
+  "hassio_api": "true",
+  "map": [ "config:rw", "backup:rw" ],
+  "options": {
+    "borg_user": "",
+    "borg_repo_url": "",
+    "borg_host": "",
+    "borg_ssh_params": "",
+    "borg_passphrase": "",
+    "borg_reponame": "",
+    "borg_compression": "",
+    "borg_backup_keep_snapshots": "5"
+  },
+  "schema": {
+    "borg_user": "str",
+    "borg_repo_url": "str",
+    "borg_host": "str",
+    "borg_ssh_params": "str",
+    "borg_passphrase": "str",
+    "borg_reponame": "str",
+    "borg_compression": "str",
+    "borg_backup_keep_snapshots": "int"
+  }
+}
