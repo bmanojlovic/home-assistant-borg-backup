@@ -64,4 +64,4 @@ addon: xxxx_borg-backup
 
 # Contact and issues
 
-Use [issue tracker](https://github.com/bmanojlovic/homeassistant-borg-backup/issues) on github for any issue with this addon.
+Use [issue tracker](https://github.com/bmanojlovic/home-assistant-borg-backup/issues) on github for any issue with this addon.

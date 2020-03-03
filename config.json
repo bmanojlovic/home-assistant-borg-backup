@@ -1,7 +1,7 @@
 {
   "name": "Borgbackup for homeassistant",
   "version": "1.0",
-  "slug": "borg-backup",
+  "slug": "borg_backup",
   "description": "Borgbackup!",
   "url": "https://github.com/bmanojlovic/home-assistant-borg-backup/",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
