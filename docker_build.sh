@@ -20,5 +20,5 @@ export DOCKER_USER="bmanojlovic"
 
 docker run --rm --privileged \
 	-v ~/.docker:/root/.docker \
-	homeassistant/amd64-builder --all -t borg-backup \
+	homeassistant/amd64-builder --all -t borg_backup \
 	-r https://github.com/bmanojlovic/home-assistant-addons -b master
