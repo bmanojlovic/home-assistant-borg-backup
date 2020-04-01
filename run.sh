@@ -120,12 +120,19 @@ function borg_create_backup {
     export SNAP_SLUG=$(jq < /tmp/borg_backup_$$ -r .data.slug)
     mkdir -p ${_BORG_TOBACKUP}/${SNAP_SLUG}
     tar -C ${_BORG_TOBACKUP}/${SNAP_SLUG} -xf /backup/${SNAP_SLUG}.tar
-    find ${_BORG_TOBACKUP} -name "*.gz" -exec gunzip {} ';'
+    for targz in ${_BORG_TOBACKUP}/${SNAP_SLUG}/*.tar.gz ; do
+                TGZDIR=$(echo ${targz}|sed -e 's/.tar.gz//g')
+                mkdir -p ${TGZDIR}
+                tar -C ${TGZDIR} -zxf  $targz
+                rm -f $targz # remove compressed file
+    done
+
     bashio::log.info "Start borg create"
     borg create ${_BORG_DEBUG} --compression ${_BORG_COMPRESSION} --stats ::"${BACKUP_TIME}" ${_BORG_TOBACKUP}/${SNAP_SLUG}
     bashio::log.info "End borg create --stats..."
     # cleanup
     rm -rf  ${_BORG_TOBACKUP} /tmp/borg_backup_$$
+
 }
 
 function clean_old_snapshots {
