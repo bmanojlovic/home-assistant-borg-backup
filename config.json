@@ -1,11 +1,11 @@
 {
   "name": "Borgbackup for homeassistant",
-  "version": "1.1",
+  "version": "1.2",
   "slug": "borg_backup",
   "description": "Borgbackup!",
   "url": "https://github.com/bmanojlovic/home-assistant-borg-backup/",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
-  "startup": "before",
+  "startup": "services",
   "boot": "manual",
   "hassio_role": "backup",
   "hassio_api": "true",
