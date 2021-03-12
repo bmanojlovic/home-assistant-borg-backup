@@ -7,6 +7,6 @@
     "i386": "homeassistant/i386-base:latest"
   },
   "args": {
-    "CLI_VERSION": "4.0.1"
+    "CLI_VERSION": "4.10.1"
   }
 }
