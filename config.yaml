@@ -1,0 +1,38 @@
+name: "Borgbackup for homeassistant"
+version: "1.2"
+slug: "borg_backup"
+description: "Borgbackup!"
+url: "https://github.com/bmanojlovic/home-assistant-borg-backup/"
+image: "bmanojlovic/{arch}-borg-backup"
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+startup: "services"
+boot: "manual"
+hassio_role: "backup"
+hassio_api: true
+homeassistant_api: true
+map:
+  - config:rw
+  - backup:rw
+options:
+  borg_user: ""
+  borg_repo_url: ""
+  borg_host: ""
+  borg_ssh_params: ""
+  borg_passphrase: ""
+  borg_reponame: ""
+  borg_compression: ""
+  borg_backup_keep_snapshots: 5
+schema:
+  borg_user: "str"
+  borg_repo_url: "str"
+  borg_host: "str"
+  borg_ssh_params: "str"
+  borg_passphrase: "str"
+  borg_reponame: "str"
+  borg_compression: "str"
+  borg_backup_keep_snapshots: "int"
