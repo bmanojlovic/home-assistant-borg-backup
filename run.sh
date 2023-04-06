@@ -109,7 +109,7 @@ function init_borg_repo {
 function borg_create_backup {
     export BACKUP_TIME=$(date  +'%Y-%m-%d-%H:%M')
     bashio::log.info "Creating snapshot"
-    ha snapshots new --name borg-${BACKUP_TIME} --raw-json --no-progress |tee /tmp/borg_backup_$$
+    ha backups new --name borg-${BACKUP_TIME} --raw-json --no-progress |tee /tmp/borg_backup_$$
     bashio::log.info "Snapshot done"
     export SNAP_RES=$(jq < /tmp/borg_backup_$$ .result -r)
     # if it is not ok something failed and should be logged anyway
@@ -135,18 +135,18 @@ function borg_create_backup {
 
 }
 
-function clean_old_snapshots {
-    ha snapshots reload
-    export ALL_SNAPS=$(ha snapshots --raw-json|jq '.data.snapshots[].name' -r| sort | wc -l)
+function clean_old_backups {
+    ha backups reload
+    export ALL_SNAPS=$(ha backups --raw-json|jq '.data.backups[].name' -r| sort | wc -l)
     export DISCARD_SNAPS=$(($ALL_SNAPS - $_BORG_BACKUP_KEEP_SNAPSHOTS))
-    export ALL_SNAPS=$(ha snapshots --raw-json|jq '.data.snapshots[].name' -r| sort | head -n ${DISCARD_SNAPS})
+    export ALL_SNAPS=$(ha backups --raw-json|jq '.data.backups[].name' -r| sort | head -n ${DISCARD_SNAPS})
     for snap in $ALL_SNAPS ; do
-        SLUG=$(ha snapshots --raw-json |jq -r '.data.snapshots[]|select (.name=="'${snap}'")|.slug')
+        SLUG=$(ha backups --raw-json |jq -r '.data.backups[]|select (.name=="'${snap}'")|.slug')
         bashio::log.info "Removing snapshot ${snap} with slug id $SLUG started"
-        ha snapshots remove $SLUG
+        ha backups remove $SLUG
         bashio::log.info "Removed snapshot ${snap} with slug id $SLUG"
     done
-    bashio::log.info "Cleanup of old snapshots done"
+    bashio::log.info "Cleanup of old backups done"
 }
 
 sanity_checks
@@ -161,4 +161,4 @@ add_borg_host_to_known_hosts
 init_borg_repo
 show_ssh_key
 borg_create_backup
-clean_old_snapshots
+clean_old_backups
