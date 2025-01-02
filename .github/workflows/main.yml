@@ -30,7 +30,7 @@ jobs:
         uses: tj-actions/changed-files@v40
         with:
           files: |
-            **/{build.yaml,config.yaml,Dockerfile,run.py}/**
+            */{build.yaml,config.yaml,Dockerfile,run.py}
 
       - name: Find add-on directories
         id: addons
@@ -41,15 +41,17 @@ jobs:
         run: |
           declare -a changed_addons
           for addon in ${{ steps.addons.outputs.addons }}; do
-            if [[ "${{ steps.changed_files.outputs.all_changed_files }}" =~ $addon ]]; then
-              for file in ${{ env.MONITORED_FILES }}; do
-                  if [[ "${{ steps.changed_files.outputs.all_changed_files }}" =~ $addon/$file ]]; then
+            for changed_file in ${{ steps.changed_files.outputs.all_changed_files }}; do
+              if [[ "$changed_file" == "$addon/"* ]]; then
+                for monitored_file in ${{ env.MONITORED_FILES }}; do
+                  if [[ "$changed_file" == "$addon/$monitored_file" ]]; then
                     if [[ ! "${changed_addons[@]}" =~ $addon ]]; then
-                      changed_addons+=("\"${addon}\",");
+                      changed_addons+=("\"${addon}\",")
                     fi
                   fi
-              done
-            fi
+                done
+              fi
+            done
           done
 
           changed=$(echo ${changed_addons[@]} | rev | cut -c 2- | rev)
