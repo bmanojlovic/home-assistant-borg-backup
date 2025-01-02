@@ -1,9 +1,13 @@
 build_from:
-  aarch64: homeassistant/aarch64-base:latest
-  amd64: homeassistant/amd64-base:latest
-  armhf: homeassistant/armhf-base:latest
-  armv7: homeassistant/armv7-base:latest
-  i386: homeassistant/i386-base:latest
-
+  aarch64: "ghcr.io/home-assistant/aarch64-base-python:"
+  armv7: "ghcr.io/home-assistant/armv7-base-python:"
+  armhf: "ghcr.io/home-assistant/armhf-base-python:"
+  amd64: "ghcr.io/home-assistant/amd64-base-python:"
+  i386: "ghcr.io/home-assistant/i386-base-python:"
+labels:
+  org.opencontainers.image.title: "Home Assistant Add-on: Borg Backup"
+  org.opencontainers.image.description: "Makes backup to remote or local borg repository"
+  org.opencontainers.image.source: "https://github.com/bmanojlovic/home-assistant-borg-backup"
+  org.opencontainers.image.licenses: "Apache License 2.0"
 args:
-  CLI_VERSION: "4.23.0"
+  CLI_VERSION: "4.36.0"

@@ -34,6 +34,22 @@ borg_repo_url: user@host:path/to/repo
 
 Please be aware that you are supposed to use only one way of doing it, as if both are used addon will exit with error.
 
+### SSH Parameters
+
+You can customize the SSH connection using the `borg_ssh_params` option. This allows you to pass additional SSH parameters like:
+
+```yaml
+borg_ssh_params: "-p 2222 -o ConnectTimeout=10"
+```
+
+Common use cases include:
+- Changing the SSH port: `-p PORT`
+- Setting connection timeouts: `-o ConnectTimeout=SECONDS`
+- Using different key types: `-o IdentityAgent=none`
+- Setting compression: `-C`
+
+The SSH parameters will be added to the base SSH command that includes the identity file and known hosts configuration.
+
 When first run addon will provide in its logs information of ssh key that you should set on borg backup server. Example key how it should look like is shown bellow.
 ```
 [00:01:07] INFO: Your ssh key to use for borg backup host

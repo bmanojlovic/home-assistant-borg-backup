@@ -4,13 +4,15 @@ on:
   push:
     branches:
       - "master"
+      - "python"
+      - "shell"
   pull_request:
     branches:
       - "master"
 
 env:
   BUILD_ARGS: "--test"
-  MONITORED_FILES: "build.yaml config.yaml Dockerfile rootfs"
+  MONITORED_FILES: "build.yaml config.yaml Dockerfile run.py"
 
 jobs:
   init:
@@ -21,11 +23,14 @@ jobs:
       changed: ${{ steps.changed_addons.outputs.changed }}
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v3.5.0
+        uses: actions/checkout@v4
 
       - name: Get changed files
         id: changed_files
-        uses: jitterbit/get-changed-files@v1
+        uses: tj-actions/changed-files@v40
+        with:
+          files: |
+            **/{build.yaml,config.yaml,Dockerfile,rootfs}/**
 
       - name: Find add-on directories
         id: addons
@@ -36,9 +41,9 @@ jobs:
         run: |
           declare -a changed_addons
           for addon in ${{ steps.addons.outputs.addons }}; do
-            if [[ "${{ steps.changed_files.outputs.all }}" =~ $addon ]]; then
+            if [[ "${{ steps.changed_files.outputs.all_changed_files }}" =~ $addon ]]; then
               for file in ${{ env.MONITORED_FILES }}; do
-                  if [[ "${{ steps.changed_files.outputs.all }}" =~ $addon/$file ]]; then
+                  if [[ "${{ steps.changed_files.outputs.all_changed_files }}" =~ $addon/$file ]]; then
                     if [[ ! "${changed_addons[@]}" =~ $addon ]]; then
                       changed_addons+=("\"${addon}\",");
                     fi
@@ -50,11 +55,11 @@ jobs:
           changed=$(echo ${changed_addons[@]} | rev | cut -c 2- | rev)
 
           if [[ -n ${changed} ]]; then
-            echo "Changed add-ons: $changed";
-            echo "changed=true" >> $GITHUB_OUTPUT;
-            echo "addons=[$changed]" >> $GITHUB_OUTPUT;
+            echo "Changed add-ons: $changed"
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "addons=[$changed]" >> $GITHUB_OUTPUT
           else
-            echo "No add-on had any monitored files changed (${{ env.MONITORED_FILES }})";
+            echo "No add-on had any monitored files changed (${{ env.MONITORED_FILES }})"
           fi
   build:
     needs: init
@@ -68,7 +73,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v3.5.0
+        uses: actions/checkout@v4
 
       - name: Get information
         id: info
@@ -80,8 +85,8 @@ jobs:
         id: check
         run: |
           if [[ "${{ steps.info.outputs.architectures }}" =~ ${{ matrix.arch }} ]]; then
-             echo "build_arch=true" >> $GITHUB_OUTPUT;
-             echo "image=$(echo ${{ steps.info.outputs.image }} | cut -d'/' -f3)" >> $GITHUB_OUTPUT;
+             echo "build_arch=true" >> "$GITHUB_OUTPUT"
+             echo "image=$(echo ${{ steps.info.outputs.image }} | cut -d'/' -f3)" >> "$GITHUB_OUTPUT"
              if [[ -z "${{ github.head_ref }}" ]] && [[ "${{ github.event_name }}" == "push" ]]; then
                  echo "BUILD_ARGS=" >> $GITHUB_ENV;
              fi
@@ -90,14 +95,14 @@ jobs:
              echo "build_arch=false" >> $GITHUB_OUTPUT;
           fi
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Login to GitHub Container Registry
         if: env.BUILD_ARGS != '--test'
-        uses: docker/login-action@v2.1.0
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -105,7 +110,7 @@ jobs:
 
       - name: Build ${{ matrix.addon }} add-on ghcr
         if: steps.check.outputs.build_arch == 'true'
-        uses: home-assistant/builder@2023.03.0
+        uses: home-assistant/builder@2024.01.0
         with:
           args: |
             ${{ env.BUILD_ARGS }} \
@@ -117,7 +122,7 @@ jobs:
 
       - name: Build ${{ matrix.addon }} add-on docker hub
         if: steps.check.outputs.build_arch == 'true'
-        uses: home-assistant/builder@2023.03.0
+        uses: home-assistant/builder@2024.01.0
         with:
           args: |
             ${{ env.BUILD_ARGS }} \

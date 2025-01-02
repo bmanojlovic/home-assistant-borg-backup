@@ -1,12 +1,23 @@
 ARG BUILD_FROM
 FROM $BUILD_FROM
 
-ENV LANG C.UTF-8
+# Set shell
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+# Setup base
+ENV LANG=C.UTF-8
 
 RUN apk add --no-cache \
         borgbackup \
         openssh-keygen \
-        openssh-client
+        openssh-client \
+        jq \
+        pigz \
+        python3 \
+        py3-pip \
+	py3-psutil \
+    && pip3 install --no-cache-dir \
+        psutil
 
 # Home Assistant CLI
 ARG BUILD_ARCH
@@ -16,7 +27,7 @@ RUN curl -Lso /usr/bin/ha \
     && chmod a+x /usr/bin/ha 
 
 # Copy required data for add-on
-COPY run.sh /
-RUN chmod a+x /run.sh
+COPY run.py /
+RUN chmod a+x /run.py
 
-CMD [ "/run.sh" ]
+CMD [ "python3", "/run.py" ]
