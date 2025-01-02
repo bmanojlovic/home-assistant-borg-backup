@@ -30,7 +30,7 @@ jobs:
         uses: tj-actions/changed-files@v40
         with:
           files: |
-            **/{build.yaml,config.yaml,Dockerfile,rootfs}/**
+            **/{build.yaml,config.yaml,Dockerfile,run.py}/**
 
       - name: Find add-on directories
         id: addons
