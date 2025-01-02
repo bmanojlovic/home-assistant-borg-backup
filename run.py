@@ -277,6 +277,9 @@ class BorgBackup:
             '--exclude', '__pycache__',
             '--exclude', '*.tmp',
             '--exclude', '*.log',
+            '--exclude', '.*.swp',
+            '--exclude', '.*.swo',
+            '--exclude', '.*.swn',
             f"::{backup_time}",
             f"{self.config.backup_dir}/{snap_slug}"
         ]
